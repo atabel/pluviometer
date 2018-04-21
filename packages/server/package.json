@@ -1,0 +1,51 @@
+{
+    "name": "aemet-server",
+    "version": "1.0.0",
+    "private": true,
+    "description": "",
+    "main": "build/server.js",
+    "scripts": {
+        "build": "node scripts/build.js",
+        "dev:start": "nodemon src/server.mjs --exec babel-node",
+        "start": "node --experimental-modules build/server.mjs",
+        "test": "jest"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "cors": "^2.8.4",
+        "cron": "^1.3.0",
+        "express": "^4.16.2",
+        "express-graphql": "^0.6.12",
+        "firebase-admin": "^5.9.1",
+        "graphql": "^0.13.1",
+        "to-utf-8": "^1.3.0"
+    },
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.0",
+        "babel-jest": "^22.4.1",
+        "babel-plugin-transform-object-rest-spread": "^6.26.0",
+        "babel-preset-env": "^1.6.1",
+        "babel-preset-flow": "^6.23.0",
+        "dotenv": "^5.0.1",
+        "jest": "^22.4.2",
+        "nodemon": "^1.17.1",
+        "watch": "^1.0.2"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "moduleFileExtensions": ["js", "json", "jsx", "node", "mjs"],
+        "testMatch": ["<rootDir>/src/**/__tests__/**/*.mjs"],
+        "transform": {
+            "^.+\\.mjs?$": "./node_modules/babel-jest"
+        }
+    },
+    "now": {
+        "env": {
+            "FIREBASE_PRIVATE_KEY": "@firebase_private_key",
+            "AEMET_API_KEY": "@aemet_api_key"
+        },
+        "alias": "https://rain.now.sh"
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "presets": [
+        [
+            "env",
+            {
+                "targets": {
+                    "node": "current"
+                },
+                "modules": false,
+                "shippedProposals": true
+            }
+        ],
+        "flow"
+    ],
+    "plugins": ["transform-object-rest-spread"],
+
+    "env": {
+        "test": {
+            "presets": [["env", {"modules": "commonjs"}]]
+        },
+        "development": {
+            "presets": [["env", {"modules": "commonjs"}]]
+        }
+    }
+}
