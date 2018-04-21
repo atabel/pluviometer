@@ -2,8 +2,12 @@
 
 ## Server
 
-See [packages/server](packages/server)
+See the code in [packages/server](packages/server)
+
+Play with the online graphql server in https://rain.now.sh/graphql
 
 ## Client PWA
 
-See [packages/webapp](packages/webapp)
+See code code in [packages/webapp](packages/webapp)
+
+Play with the online app in https://pluviometro.now.sh/ (better on mobile)
