@@ -18,4 +18,4 @@ export const useSelect = <T>(initialValue: (() => T) | T): [T, (newValue: T) => 
 };
 
 //$FlowFixMe using react@next
-export const useMemo = <T>(fn: () => T, input: Array<mixed>): T => React.memo(fn, input);
+export const useMemo = <T>(fn: () => T, input: Array<mixed>): T => React.useMemo(fn, input);

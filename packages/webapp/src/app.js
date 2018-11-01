@@ -7,8 +7,6 @@ import PeriodSelector, {Period} from './period-selector';
 import StationSelector from './station-selector';
 import {useState, useEffect, useSelect, useMemo} from './react-hooks';
 
-import type {Station} from './models';
-
 const storage = {
     saveStationId(stationId) {
         localStorage.setItem('stationId', stationId);
