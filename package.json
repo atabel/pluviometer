@@ -7,10 +7,9 @@
         "flow:coverage": "flow-coverage-report --config .flowcoverage.json"
     },
     "devDependencies": {
-        "flow-bin": "^0.67.1",
+        "flow-bin": "^0.85.0",
         "flow-coverage-report": "^0.5.0",
         "flow-typed": "^2.3.0",
-        "glow": "^1.2.2",
         "lerna": "^2.9.0",
         "prettier": "^1.14.3"
     },

@@ -7,6 +7,8 @@ import PeriodSelector, {Period} from './period-selector';
 import StationSelector from './station-selector';
 import {useState, useEffect, useSelect, useMemo} from './react-hooks';
 
+import type {Station} from './models';
+
 const storage = {
     saveStationId(stationId) {
         localStorage.setItem('stationId', stationId);
@@ -34,7 +36,8 @@ const geoDist = (coords1, coords2) => {
 };
 
 const screen = css({
-    fontFamily: "'Roboto', sans-serif",
+    fontFamily:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     height: '100%',
     color: 'white',
     display: 'flex',

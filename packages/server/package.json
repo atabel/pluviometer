@@ -22,23 +22,33 @@
         "to-utf-8": "^1.3.0"
     },
     "devDependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-core": "^6.26.0",
-        "babel-jest": "^22.4.1",
-        "babel-plugin-transform-object-rest-spread": "^6.26.0",
-        "babel-preset-env": "^1.6.1",
-        "babel-preset-flow": "^6.23.0",
+        "@babel/cli": "^7.0.0",
+        "@babel/core": "^7.0.0",
+        "@babel/node": "^7.0.0",
+        "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+        "@babel/preset-env": "^7.0.0",
+        "@babel/preset-flow": "^7.0.0",
+        "babel-core": "^7.0.0-bridge.0",
+        "babel-jest": "^23.4.2",
         "dotenv": "^5.0.1",
-        "jest": "^22.4.2",
+        "jest": "^23.6.0",
         "nodemon": "^1.17.1",
         "watch": "^1.0.2"
     },
     "jest": {
         "testEnvironment": "node",
-        "moduleFileExtensions": ["js", "json", "jsx", "node", "mjs"],
-        "testMatch": ["<rootDir>/src/**/__tests__/**/*.mjs"],
+        "moduleFileExtensions": [
+            "js",
+            "json",
+            "jsx",
+            "node",
+            "mjs"
+        ],
+        "testMatch": [
+            "<rootDir>/src/**/__tests__/**/*.mjs"
+        ],
         "transform": {
-            "^.+\\.mjs?$": "./node_modules/babel-jest"
+            "^.+\\.mjs?$": "babel-jest"
         }
     },
     "now": {

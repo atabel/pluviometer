@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
 import {css} from 'glamor';
-import iconLocation from './assets/icon-location.svg';
 import type {Station} from './models';
+import {ReactComponent as LocationIcon} from './assets/icon-location.svg';
 
 type Props = {|
     stations: Station[],
@@ -15,6 +15,7 @@ const StationSelector = ({stations, value, onChange}: Props) => (
         {stations.length > 0 &&
             value && (
                 <select
+                    aria-label="Estación meteorológica"
                     onChange={evt => onChange(evt.target.value)}
                     value={value}
                     id="station"
@@ -39,9 +40,7 @@ const StationSelector = ({stations, value, onChange}: Props) => (
                     ))}
                 </select>
             )}
-        <img
-            alt=""
-            src={iconLocation}
+        <LocationIcon
             className={css({
                 position: 'absolute',
                 top: 16,
