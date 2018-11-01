@@ -2,12 +2,12 @@
 import * as React from 'react';
 import {css} from 'glamor';
 
-type PeriodProps = {
+type PeriodProps = {|
     value: number,
     checked?: boolean,
     onChange?: (evt: SyntheticEvent<HTMLInputElement>) => mixed,
     text: string,
-};
+|};
 
 export const Period = ({value, checked, onChange, text}: PeriodProps) => (
     <React.Fragment>
@@ -43,36 +43,33 @@ export const Period = ({value, checked, onChange, text}: PeriodProps) => (
     </React.Fragment>
 );
 
-type PeriodSelectorProps = {
+type PeriodSelectorProps = {|
     children: React.ChildrenArray<React.Element<typeof Period>>,
     value: number,
     onChange: (value: number) => mixed,
-};
-class PeriodSelector extends React.Component<PeriodSelectorProps> {
-    handleChange = (evt: SyntheticEvent<HTMLInputElement>) => {
-        this.props.onChange(Number((evt.currentTarget: HTMLInputElement).value));
-    };
+|};
 
-    render() {
-        const {children, value} = this.props;
-        return (
-            <div
-                className={css({
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                    height: 64,
-                })}
-            >
-                {React.Children.map(children, child =>
-                    React.cloneElement(child, {
-                        checked: value === child.props.value,
-                        onChange: this.handleChange,
-                    })
-                )}
-            </div>
-        );
-    }
-}
+const PeriodSelector = ({children, value, onChange}: PeriodSelectorProps) => {
+    const handleChange = (evt: SyntheticEvent<HTMLInputElement>) => {
+        onChange(Number(evt.currentTarget.value));
+    };
+    return (
+        <div
+            className={css({
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                height: 64,
+            })}
+        >
+            {React.Children.map(children, child =>
+                React.cloneElement(child, {
+                    checked: value === child.props.value,
+                    onChange: handleChange,
+                })
+            )}
+        </div>
+    );
+};
 
 export default PeriodSelector;

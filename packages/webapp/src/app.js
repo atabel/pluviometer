@@ -1,10 +1,11 @@
 // @flow
-import React, {Component} from 'react';
+import React from 'react';
 import {css} from 'glamor';
 import api from './api';
 import RainGauge from './rain-gauge';
 import PeriodSelector, {Period} from './period-selector';
 import StationSelector from './station-selector';
+import {useState, useEffect, useSelect, useMemo} from './react-hooks';
 
 const storage = {
     saveStationId(stationId) {
@@ -15,7 +16,7 @@ const storage = {
     },
 };
 
-const toRad = val => val * Math.PI / 180;
+const toRad = val => (val * Math.PI) / 180;
 
 const geoDist = (coords1, coords2) => {
     const {lat: lat1, lon: lon1} = coords1;
@@ -71,124 +72,108 @@ const screen = css({
 const byStrKey = key => (a, b) => a[key].localeCompare(b[key]);
 const byDistance = geoPosition => (a, b) => geoDist(a, geoPosition) - geoDist(b, geoPosition);
 
-type State = {
-    geoPosition: ?{lat: number, lon: number},
-    stations: Array<*>,
-    totalRain: number,
-    loading: boolean,
-    timeRange: number,
-    selectedStationId: ?string,
-};
-
-class App extends Component<{}, State> {
-    state = {
-        geoPosition: null,
-        stations: [],
-        totalRain: 0,
-        loading: true,
-        timeRange: 1,
-        selectedStationId: storage.loadStationId(),
-    };
-
-    getStations() {
-        const {stations, geoPosition} = this.state;
-        return [...stations].sort(geoPosition ? byDistance(geoPosition) : byStrKey('name'));
-    }
-
-    getSelectedStation() {
-        const {selectedStationId} = this.state;
-        const stations = this.getStations();
-        if (selectedStationId === null) {
-            return stations.length > 0 ? stations[0].id : null;
-        } else {
-            return selectedStationId;
-        }
-    }
-
-    componentDidMount() {
-        api.getStations().then(stations => {
-            this.setState({stations});
-            this.queryStationData();
-        });
+const useGeoPosition = () => {
+    const [geoPosition, setGeoPosition] = useState(null);
+    useEffect(() => {
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(position => {
-                this.setState({
-                    geoPosition: {
-                        lat: position.coords.latitude,
-                        lon: position.coords.longitude,
-                    },
+                setGeoPosition({
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude,
                 });
             });
         }
-    }
+    }, []);
+    return geoPosition;
+};
 
-    queryStationData = () => {
-        const selectedStationId = this.getSelectedStation();
-        if (!selectedStationId) {
-            return;
-        }
-        const {timeRange} = this.state;
-        this.setState({loading: true});
-        api.getStationAggregatedRain(selectedStationId, timeRange).then(
-            totalRain => {
-                this.setState({totalRain, loading: false});
-            },
-            err => {
-                console.error(err);
-                this.setState({totalRain: 0, loading: false});
+const useTotalRain = (selectedStationId, timeRange) => {
+    const [totalRain, setTotalRain] = useState(0);
+    const [loading, setLoading] = useState(true);
+    useEffect(
+        () => {
+            if (!selectedStationId) {
+                return;
             }
-        );
-    };
+            setLoading(true);
+            api.getStationAggregatedRain(selectedStationId, timeRange).then(
+                totalRain => {
+                    setTotalRain(totalRain);
+                    setLoading(false);
+                },
+                err => {
+                    console.error(err);
+                    setTotalRain(0);
+                    setLoading(false);
+                }
+            );
+        },
+        [selectedStationId, timeRange]
+    );
+    return {totalRain, loading};
+};
 
-    componentDidUpdate(prevProps: {}, prevState: State) {
-        const {selectedStationId, timeRange} = this.state;
-        if (selectedStationId !== prevState.selectedStationId || timeRange !== prevState.timeRange) {
-            this.queryStationData();
-        }
+const useStations = geoPosition => {
+    const [stations, setStations] = useState([]);
+    useEffect(() => {
+        api.getStations().then(stations => {
+            setStations(stations);
+        });
+    }, []);
+
+    const sortedStations = useMemo(
+        () => [...stations].sort(geoPosition ? byDistance(geoPosition) : byStrKey('name')),
+        [stations]
+    );
+
+    const [stationIdFromState, handleStationChange] = useSelect(() => storage.loadStationId());
+
+    let selectedStationId = stationIdFromState;
+    if (selectedStationId === null) {
+        selectedStationId = sortedStations.length > 0 ? sortedStations[0].id : null;
     }
 
-    handlePeriodChange = (timeRange: number) => {
-        this.setState({timeRange});
-    };
+    useEffect(
+        () => {
+            if (selectedStationId) {
+                storage.saveStationId(selectedStationId);
+            }
+        },
+        [selectedStationId]
+    );
 
-    handleStationChange = (selectedStationId: string) => {
-        this.setState({selectedStationId});
-        storage.saveStationId(selectedStationId);
-    };
+    return {stations: sortedStations, selectedStationId, handleStationChange};
+};
 
-    render() {
-        const {totalRain, timeRange /*, loading*/} = this.state;
+const PluviometerApp = () => {
+    const geoPosition = useGeoPosition();
+    const [timeRange, handlePeriodChange] = useSelect(1);
+    const {stations, selectedStationId, handleStationChange} = useStations(geoPosition);
 
-        const sortedStations = this.getStations();
-        const selectedStationId = this.getSelectedStation();
+    const {totalRain /*, loading*/} = useTotalRain(selectedStationId, timeRange);
 
-        return (
-            <div className={screen}>
-                <StationSelector
-                    stations={sortedStations}
-                    value={selectedStationId}
-                    onChange={this.handleStationChange}
-                />
+    return (
+        <div className={screen}>
+            <StationSelector stations={stations} value={selectedStationId} onChange={handleStationChange} />
 
-                <div
-                    className={css({
-                        flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'column',
-                    })}
-                >
-                    <RainGauge rain={totalRain} />
-                </div>
-                <PeriodSelector value={timeRange} onChange={this.handlePeriodChange}>
-                    <Period value={1} text="24 h" />
-                    <Period value={7} text="7 días" />
-                    <Period value={30} text="30 días" />
-                </PeriodSelector>
+            <div
+                className={css({
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                })}
+            >
+                <RainGauge rain={totalRain} />
             </div>
-        );
-    }
-}
+            <PeriodSelector value={timeRange} onChange={handlePeriodChange}>
+                <Period value={1} text="24 h" />
+                <Period value={7} text="7 días" />
+                <Period value={30} text="30 días" />
+            </PeriodSelector>
+        </div>
+    );
+};
 
-export default App;
+export default PluviometerApp;
