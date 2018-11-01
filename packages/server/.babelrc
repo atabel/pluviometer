@@ -1,7 +1,7 @@
 {
     "presets": [
         [
-            "env",
+            "@babel/preset-env",
             {
                 "targets": {
                     "node": "current"
@@ -10,16 +10,31 @@
                 "shippedProposals": true
             }
         ],
-        "flow"
+        "@babel/preset-flow"
     ],
-    "plugins": ["transform-object-rest-spread"],
-
+    "plugins": [
+        "@babel/plugin-proposal-object-rest-spread"
+    ],
     "env": {
         "test": {
-            "presets": [["env", {"modules": "commonjs"}]]
+            "presets": [
+                [
+                    "@babel/preset-env",
+                    {
+                        "modules": "commonjs"
+                    }
+                ]
+            ]
         },
         "development": {
-            "presets": [["env", {"modules": "commonjs"}]]
+            "presets": [
+                [
+                    "@babel/preset-env",
+                    {
+                        "modules": "commonjs"
+                    }
+                ]
+            ]
         }
     }
 }

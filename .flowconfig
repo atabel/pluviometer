@@ -1,6 +1,7 @@
 [ignore]
 .*/node_modules/qrpc/.*
 .*/node_modules/protobufjs/.*
+.*/node_modules/graphql/utilities/buildASTSchema.js
 .*/build/.*
 .*/flow-coverage/.*
 
@@ -14,5 +15,6 @@ flow-typed
 [options]
 module.file_ext=.js
 module.file_ext=.mjs
+module.name_mapper.extension='svg' -> '<PROJECT_ROOT>/packages/webapp/src/svg-component.js.flow'
 
 [strict]

@@ -6,6 +6,8 @@ import RainGauge from './rain-gauge';
 import PeriodSelector, {Period} from './period-selector';
 import StationSelector from './station-selector';
 
+import type {Station} from './models';
+
 const storage = {
     saveStationId(stationId) {
         localStorage.setItem('stationId', stationId);
@@ -15,7 +17,7 @@ const storage = {
     },
 };
 
-const toRad = val => val * Math.PI / 180;
+const toRad = val => (val * Math.PI) / 180;
 
 const geoDist = (coords1, coords2) => {
     const {lat: lat1, lon: lon1} = coords1;
@@ -33,7 +35,8 @@ const geoDist = (coords1, coords2) => {
 };
 
 const screen = css({
-    fontFamily: "'Roboto', sans-serif",
+    fontFamily:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     height: '100%',
     color: 'white',
     display: 'flex',
@@ -73,7 +76,7 @@ const byDistance = geoPosition => (a, b) => geoDist(a, geoPosition) - geoDist(b,
 
 type State = {
     geoPosition: ?{lat: number, lon: number},
-    stations: Array<*>,
+    stations: Array<Station>,
     totalRain: number,
     loading: boolean,
     timeRange: number,
@@ -90,7 +93,7 @@ class App extends Component<{}, State> {
         selectedStationId: storage.loadStationId(),
     };
 
-    getStations() {
+    getStations(): Array<Station> {
         const {stations, geoPosition} = this.state;
         return [...stations].sort(geoPosition ? byDistance(geoPosition) : byStrKey('name'));
     }
