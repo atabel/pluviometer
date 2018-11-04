@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import {css} from 'glamor';
-import {Motion, spring} from 'react-motion';
-import Media from 'react-media';
+import {useMedia} from './react-hooks';
+import {useSpring} from './spring';
 
 type RainGaugeProps = {|percent: number|};
 
@@ -39,6 +39,7 @@ const RainGauge = (props: RainGaugeProps) => {
                             fill="#CEDCFF"
                         />
                         <rect
+                            style={{willChange: 'y, height'}}
                             id="water"
                             fill="#6C5FD9"
                             x="10"
@@ -81,25 +82,22 @@ const maxRain = 100;
 
 type Props = {|rain: number|};
 
-const AnimatedRainGauge = ({rain = 20}: Props) => (
-    <Motion defaultStyle={{rain: 0}} style={{rain: spring(rain)}}>
-        {value => (
-            <React.Fragment>
-                <div className={css({padding: 20, fontWeight: 'bold', position: 'relative'})}>
-                    <span className={css({fontSize: 40})}>{formatRain(value.rain)}</span>
-                    <span className={css({position: 'absolute', top: 26, right: -14})}>mm</span>
+const AnimatedRainGauge = ({rain}: Props) => {
+    const isPortrait = useMedia('(orientation: portrait)');
+    const value = useSpring(rain);
+    return (
+        <React.Fragment>
+            <div className={css({padding: 20, fontWeight: 'bold', position: 'relative'})}>
+                <span className={css({fontSize: 40})}>{formatRain(value)}</span>
+                <span className={css({position: 'absolute', top: 26, right: -14})}>mm</span>
+            </div>
+            {isPortrait && (
+                <div className={css({width: '38%'})}>
+                    <RainGauge percent={(100 * value) / maxRain} />
                 </div>
-                <Media
-                    query="(orientation: portrait)"
-                    render={() => (
-                        <div className={css({width: '38%'})}>
-                            <RainGauge percent={(100 * value.rain) / maxRain} />
-                        </div>
-                    )}
-                />
-            </React.Fragment>
-        )}
-    </Motion>
-);
+            )}
+        </React.Fragment>
+    );
+};
 
 export default AnimatedRainGauge;

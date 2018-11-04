@@ -5,10 +5,7 @@
     "dependencies": {
         "glamor": "^2.20.40",
         "react": "^16.7.0-alpha.0",
-        "react-dom": "^16.7.0-alpha.0",
-        "react-media": "^1.8.0",
-        "react-motion": "^0.5.2",
-        "victory": "^0.24.5"
+        "react-dom": "^16.7.0-alpha.0"
     },
     "devDependencies": {
         "react-scripts": "^2.1.1"
