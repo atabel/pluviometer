@@ -96,16 +96,23 @@ const useTotalRain = (selectedStationId, timeRange) => {
             if (!selectedStationId) {
                 return;
             }
-            setLoading(true);
+            let hasFinished = false;
+            setTimeout(() => {
+                if (!hasFinished) {
+                    setLoading(true);
+                }
+            }, 500);
             api.getStationAggregatedRain(selectedStationId, timeRange).then(
                 totalRain => {
                     setTotalRain(totalRain);
                     setLoading(false);
+                    hasFinished = true;
                 },
                 err => {
                     console.error(err);
                     setTotalRain(0);
                     setLoading(false);
+                    hasFinished = true;
                 }
             );
         },
@@ -151,7 +158,8 @@ const PluviometerApp = () => {
     const [timeRange, handlePeriodChange] = useSelect(1);
     const {stations, selectedStationId, handleStationChange} = useStations(geoPosition);
 
-    const {totalRain /*, loading*/} = useTotalRain(selectedStationId, timeRange);
+    //TODO: use Suspense
+    const {totalRain, loading} = useTotalRain(selectedStationId, timeRange);
 
     return (
         <div className={screen}>
@@ -164,6 +172,7 @@ const PluviometerApp = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexDirection: 'column',
+                    filter: loading ? 'blur(5px)' : undefined,
                 })}
             >
                 <RainGauge rain={totalRain} />

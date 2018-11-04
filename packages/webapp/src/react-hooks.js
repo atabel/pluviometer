@@ -16,6 +16,8 @@ export const useMemo = <T>(fn: () => T, input: Array<mixed>): T => (React: any).
 
 export const useRef = <T>(initialValue: T): {current: T} => (React: any).useRef(initialValue);
 
+export const useContext = <T>(context: React$Context<T>): T => (React: any).useContext(context);
+
 // Custom hooks:
 
 export const useSelect = <T>(initialValue: (() => T) | T): [T, (newValue: T) => void] => {

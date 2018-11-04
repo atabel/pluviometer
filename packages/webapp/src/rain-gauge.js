@@ -39,7 +39,6 @@ const RainGauge = (props: RainGaugeProps) => {
                             fill="#CEDCFF"
                         />
                         <rect
-                            style={{willChange: 'y, height'}}
                             id="water"
                             fill="#6C5FD9"
                             x="10"
